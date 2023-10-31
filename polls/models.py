@@ -6,6 +6,7 @@ from django.urls import reverse
 import uuid
 import datetime
 
+
 class Poll(models.Model):
     id = models.UUIDField(_("Poll Id"), 
                           primary_key=True,
