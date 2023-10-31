@@ -1,7 +1,7 @@
 
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import PollViewSet, CommentViewSet, VoteViewSet
+from polls.views import PollViewSet, CommentViewSet, VoteViewSet
 
 router = DefaultRouter()
 router.register(r'', PollViewSet, basename='polls')
