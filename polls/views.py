@@ -11,11 +11,11 @@ from rest_framework import (
 from rest_framework.decorators import action
 
 from polls.serialisers import (
-    PollSerializer, OptionSerializer, VoteSerializer
+    PollSerializer, OptionSerializer, VoteSerializer, CommentSerializer
 )
 
 from polls.models import (
-    Poll, Option, Vote
+    Poll, Option, Vote, Comment
 )
 
 from polls.permissions import IsAuthorOrReadOnly 
@@ -55,4 +55,36 @@ class PollViewSet(viewsets.ModelViewSet):
         if not request.user == poll.author:
             raise exceptions.PermissionDenied("You can not delete this poll")
         return super().destroy(request, *args, **kwargs)
+
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthorOrReadOnly]
+
+    # action for updating a comment
+    @action(detail=True, methods=['put'])
+    def update_comment(self, request, pk=None):
+        comment = self.get_object()
+        # Check if the user is the author of the comment
+        if comment.author != request.user:
+            return response.Response({"detail": "You do not have permission to update this comment."}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(comment, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response(serializer.data)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # action for deleting a comment
+    @action(detail=True, methods=['delete'])
+    def delete_comment(self, request, pk=None):
+        comment = self.get_object()
+        # Check if the user is the author of the comment
+        if comment.author != request.user:
+            return response.Response({"detail": "You do not have permission to delete this comment."}, status=status.HTTP_403_FORBIDDEN)
+
+        comment.delete()
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
