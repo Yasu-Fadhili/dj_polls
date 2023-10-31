@@ -12,14 +12,14 @@ class Poll(models.Model):
                           unique=True,
                           default=uuid.uuid4)
     question = models.CharField(_("Poll Question"), max_length=255)
-    expiry_date = models.DateTimeField(_("Poll Expiry Date"), auto_now_add=True)
+    expiry_date = models.DateTimeField(_("Poll Expiry Date"), auto_now_add=False, blank=True, null=True)
     visibility = models.CharField(_("Poll Visibility"), max_length=50,
                                   choices=(
                                       ("public", "Public"),
                                       ("private", "Private")
                                       ), default="public")
-    created_at = models.DateTimeField(_("DateTime published"), auto_now_add=False)
-    updated_at = models.DateTimeField(_("DateTime updated"), auto_now=True)
+    created_at = models.DateTimeField(_("DateTime published"), auto_now=True)
+    updated_at = models.DateTimeField(_("DateTime updated"), auto_now_add=True)
     
     def was_published_recently(self):
         now = datetime.timezone.now()
@@ -41,6 +41,8 @@ class Poll(models.Model):
 class Option(models.Model):
     poll = models.ForeignKey("polls.Poll", verbose_name=_("Option Poll"), on_delete=models.CASCADE)
     option = models.CharField(_("Option"), max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
     def total_votes(self):
         return Vote.objects.filter(option=self, poll=self.poll).count()
@@ -56,6 +58,8 @@ class Vote(models.Model):
     author = models.ForeignKey(User, verbose_name=_("Vote Author"), on_delete=models.CASCADE)
     poll = models.ForeignKey("polls.Poll", verbose_name=_("Poll"), on_delete=models.CASCADE)
     option = models.ForeignKey("polls.Option", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = ("Poll option vote")
@@ -74,8 +78,8 @@ class Comment(models.Model):
     poll = models.ForeignKey("polls.Poll", verbose_name=_("Poll"), on_delete=models.CASCADE)
     author = models.ForeignKey(User, verbose_name=_("Poll Author"), on_delete=models.CASCADE)
     content = models.TextField(_("Poll Comment"), max_length=1000)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = _("Comment")
