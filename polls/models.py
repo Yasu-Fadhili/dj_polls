@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
 import uuid
-
+import datetime
 
 class Poll(models.Model):
     id = models.UUIDField(_("Poll Id"), 
@@ -18,6 +18,12 @@ class Poll(models.Model):
                                       ("public", "Public"),
                                       ("private", "Private")
                                       ), default="public")
+    created_at = models.DateTimeField(_("DateTime published"), auto_now_add=False)
+    updated_at = models.DateTimeField(_("DateTime updated"), auto_now=True)
+    
+    def was_published_recently(self):
+        now = datetime.timezone.now()
+        return now - datetime.timedelta(days=1) <= self.created_at <= now
     
     def total_votes(self):
         return Vote.objects.filter(poll=self).count()
@@ -36,6 +42,9 @@ class Option(models.Model):
     poll = models.ForeignKey("polls.Poll", verbose_name=_("Option Poll"), on_delete=models.CASCADE)
     option = models.CharField(_("Option"), max_length=255)
 
+    def total_votes(self):
+        return Vote.objects.filter(option=self, poll=self.poll).count()
+    
     def __str__(self) -> str:
         return f"{self.option} on poll {self.poll}"
     
@@ -70,10 +79,10 @@ class Comment(models.Model):
     class Meta:
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")
-
+        
     def __str__(self):
         return f"{self.content[:50]}"
-
+        
     def get_absolute_url(self):
         return reverse("Comment_detail", kwargs={"pk": self.pk})
 
