@@ -88,3 +88,29 @@ class CommentViewSet(viewsets.ModelViewSet):
         comment.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class VoteViewSet(viewsets.ModelViewSet):
+    queryset = Vote.objects.all()
+    serializer_class = VoteSerializer
+
+    # action for creating a vote
+    @action(detail=False, methods=['post'])
+    def create_vote(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # action for deleting a vote
+    @action(detail=True, methods=['delete'])
+    def delete_vote(self, request, pk=None):
+        vote = self.get_object()
+        # Check if the user is the author of the vote
+        if vote.author != request.user:
+            return response.Response({"detail": "You do not have permission to delete this vote."}, status=status.HTTP_403_FORBIDDEN)
+
+        vote.delete()
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+
