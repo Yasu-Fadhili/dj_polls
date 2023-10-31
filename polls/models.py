@@ -50,7 +50,7 @@ class Option(models.Model):
     
     def get_absolute_url(self):
         return reverse("Option_detail", kwargs={"pk": self.pk})
-    
+
 
 class Vote(models.Model):
     author = models.ForeignKey(User, verbose_name=_("Vote Author"), on_delete=models.CASCADE)
@@ -60,6 +60,7 @@ class Vote(models.Model):
     class Meta:
         verbose_name = ("Poll option vote")
         verbose_name_plural = ("Poll option votes")
+        unique_together = ("poll", "author")
     
     def __str__(self) -> str:
         return f"{self.author} voted {self.option[:30]} on {self.poll[:50]}"
@@ -79,10 +80,10 @@ class Comment(models.Model):
     class Meta:
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")
-        
+
     def __str__(self):
         return f"{self.content[:50]}"
-        
+
     def get_absolute_url(self):
         return reverse("Comment_detail", kwargs={"pk": self.pk})
 
