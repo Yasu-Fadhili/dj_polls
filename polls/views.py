@@ -40,7 +40,7 @@ class PollViewSet(viewsets.ModelViewSet):
             serializer.save()
             return response.Response(serializer.data)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
     # action for deleting a poll
     @action(detail=True, methods=['delete'])
     def delete_poll(self, request, id=None):
@@ -48,7 +48,7 @@ class PollViewSet(viewsets.ModelViewSet):
         # Check if the user is the author of the poll
         if poll.author != request.user:
             return response.Response({"detail": "You do not have permission to delete this poll."}, status=status.HTTP_403_FORBIDDEN)
-
+        
         poll.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
     
@@ -57,8 +57,6 @@ class PollViewSet(viewsets.ModelViewSet):
         if not request.user == poll.author:
             raise exceptions.PermissionDenied("You can not delete this poll")
         return super().destroy(request, *args, **kwargs)
-
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -72,13 +70,13 @@ class CommentViewSet(viewsets.ModelViewSet):
         # Check if the user is the author of the comment
         if comment.author != request.user:
             return response.Response({"detail": "You do not have permission to update this comment."}, status=status.HTTP_403_FORBIDDEN)
-
+        
         serializer = self.get_serializer(comment, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return response.Response(serializer.data)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
     # action for deleting a comment
     @action(detail=True, methods=['delete'])
     def delete_comment(self, request, pk=None):
@@ -86,7 +84,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         # Check if the user is the author of the comment
         if comment.author != request.user:
             return response.Response({"detail": "You do not have permission to delete this comment."}, status=status.HTTP_403_FORBIDDEN)
-
+        
         comment.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -103,7 +101,7 @@ class VoteViewSet(viewsets.ModelViewSet):
             serializer.save(author=request.user)
             return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
     # action for deleting a vote
     @action(detail=True, methods=['delete'])
     def delete_vote(self, request, pk=None):
@@ -111,7 +109,7 @@ class VoteViewSet(viewsets.ModelViewSet):
         # Check if the user is the author of the vote
         if vote.author != request.user:
             return response.Response({"detail": "You do not have permission to delete this vote."}, status=status.HTTP_403_FORBIDDEN)
-
+        
         vote.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
