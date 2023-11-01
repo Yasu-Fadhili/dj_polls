@@ -43,6 +43,7 @@ class PollSerializer(serializers.ModelSerializer):
         model = Poll
         fields = (
             "id",
+            "author",
             "question",
             "options",
             "expiry_date",
