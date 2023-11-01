@@ -20,12 +20,13 @@ from polls.models import (
 
 from polls.permissions import IsAuthorOrReadOnly 
 
+
 class PollViewSet(viewsets.ModelViewSet):
     queryset = Poll.objects.all()
     serializer_class = PollSerializer
     permission_classes = [IsAuthorOrReadOnly]
     lookup_field = "id"
-
+    
     # action for updating a poll
     @action(detail=True, methods=['put'])
     def update_poll(self, request, pk=None):

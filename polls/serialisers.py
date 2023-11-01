@@ -11,6 +11,7 @@ from polls.models import (
     Comment
 )
 
+
 class VoteSerializer(serializers.ModelSerializer):
 
     class Meta:
