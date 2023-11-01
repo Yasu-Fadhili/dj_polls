@@ -22,6 +22,9 @@ class Poll(models.Model):
     created_at = models.DateTimeField(_("DateTime published"), auto_now=True)
     updated_at = models.DateTimeField(_("DateTime updated"), auto_now_add=True)
     
+    def options(self):
+        return Option.objects.filter(poll=self)
+    
     def was_published_recently(self):
         now = datetime.timezone.now()
         return now - datetime.timedelta(days=1) <= self.created_at <= now
@@ -68,7 +71,7 @@ class Vote(models.Model):
         unique_together = ("poll", "author")
     
     def __str__(self) -> str:
-        return f"{self.author} voted {self.option[:30]} on {self.poll[:50]}"
+        return f"{self.author} voted {self.option} on {self.poll}"
     
     def get_absolute_url(self):
         return reverse("Poll_detail", kwargs={"pk": self.pk})
