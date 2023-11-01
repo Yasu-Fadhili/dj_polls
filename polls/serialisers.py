@@ -23,18 +23,19 @@ class VoteSerializer(serializers.ModelSerializer):
         )
 
 class OptionSerializer(serializers.ModelSerializer):
-    votes = VoteSerializer(many=True, required=False)
+    #votes = VoteSerializer(many=True, required=False)
 
     class Meta:
         model = Option
         fields = (
             "id",
-            "option"
+            "option",
+            "total_votes"
         )
 
 class PollSerializer(serializers.ModelSerializer):
     #was_published_recently = serializers.BooleanField(read_only=True)
-    choices = OptionSerializer(many=True, read_only=True, required=False)
+    options = OptionSerializer(many=True, read_only=True, required=False)
     #choices = OptionSerializer()
 
     class Meta:
@@ -42,9 +43,10 @@ class PollSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "question",
-            "choices",
+            "options",
             "expiry_date",
             "visibility",
+            "total_votes",
             "created_at",
             "updated_at"
         )
