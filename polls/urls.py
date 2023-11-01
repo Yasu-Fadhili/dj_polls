@@ -10,8 +10,8 @@ router.register(r"votes", VoteViewSet, basename="votes")
 
 
 urlpatterns = [
-    path("<int:pk>/update/", PollViewSet.as_view({"put": "update_poll"}), name="poll-update"),
-    path("<int:pk>/delete/", PollViewSet.as_view({"delete": "delete_poll"}), name="poll-delete"),
+    path("<str:id>/update/", PollViewSet.as_view({"put": "update_poll"}), name="poll-update"),
+    path("<str:id>/delete/", PollViewSet.as_view({"delete": "delete_poll"}), name="poll-delete"),
     path("comments/<int:pk>/update/", CommentViewSet.as_view({"put": "update_comment"}), name="comment-update"),
     path("comments/<int:pk>/delete/", CommentViewSet.as_view({"delete": "delete_comment"}), name="comment-delete"),
     path("votes/create/", VoteViewSet.as_view({"post": "create_vote"}), name="vote-create"),
