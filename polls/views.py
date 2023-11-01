@@ -29,7 +29,7 @@ class PollViewSet(viewsets.ModelViewSet):
     
     # action for updating a poll
     @action(detail=True, methods=['put'])
-    def update_poll(self, request, pk=None):
+    def update_poll(self, request, id=None):
         poll = self.get_object()
         # Check if the user is the author of the poll
         if poll.author != request.user:
@@ -43,7 +43,7 @@ class PollViewSet(viewsets.ModelViewSet):
 
     # action for deleting a poll
     @action(detail=True, methods=['delete'])
-    def delete_poll(self, request, pk=None):
+    def delete_poll(self, request, id=None):
         poll = self.get_object()
         # Check if the user is the author of the poll
         if poll.author != request.user:
