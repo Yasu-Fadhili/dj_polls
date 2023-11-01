@@ -1,4 +1,4 @@
-
+from django.contrib.auth.models import User
 
 from rest_framework import (
     serializers,
@@ -11,6 +11,17 @@ from polls.models import (
     Comment
 )
 
+
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+        )
 
 class VoteSerializer(serializers.ModelSerializer):
 
@@ -37,6 +48,7 @@ class OptionSerializer(serializers.ModelSerializer):
 class PollSerializer(serializers.ModelSerializer):
     #was_published_recently = serializers.BooleanField(read_only=True)
     options = OptionSerializer(many=True, read_only=True, required=False)
+    author = AuthorSerializer(read_only=True)
     #choices = OptionSerializer()
 
     class Meta:
