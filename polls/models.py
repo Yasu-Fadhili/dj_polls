@@ -8,6 +8,7 @@ import datetime
 
 class Poll(models.Model):
     id = models.UUIDField(_("Poll Id"), primary_key=True, unique=True, default=uuid.uuid4)
+    author = models.ForeignKey(User, verbose_name=_("Poll author"), on_delete=models.CASCADE)
     question = models.CharField(_("Poll Question"), max_length=255)
     expiry_date = models.DateTimeField(_("Poll Expiry Date"), blank=True, null=True)
     visibility = models.CharField(_("Poll Visibility"), max_length=50, choices=(
